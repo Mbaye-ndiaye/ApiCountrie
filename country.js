@@ -5,82 +5,90 @@ const affiche = document.getElementById('region')
 const input = document.getElementById('myInput')
 const bouton = document.getElementById('dark')
 const select = document.getElementById('countrie')
-console.log(select);
+const error = document.getElementById('error');
+// console.log(select);
 
 // console.log(input)
+function afficheDesPays(pays) {
+    affiche.innerHTML = '';
 
+    pays.forEach(country => {
+        const div = document.createElement('div')
+        
+        div.innerHTML = `
+        <div class="country">
+        <img src = "${country.flags.png}"><br>
+        <h4> ${country.name.common}<h4><br>
+        <span> region: ${country.region}</span><br>
+        <span> population: ${country.population}</span><br>
+        <span> Capital: ${country.capital}</span><br>`
 
+        affiche.appendChild(div)
+    })
+bouton.addEventListener('click', function(){
+    document.body.classList.toggle('color')
+    
+    bouton.classList.toggle('color')
+})
+    
+}
 fetch('https://restcountries.com/v3.1/all')
 .then(response => response.json())
 .then(r => {
-    
-     
-        function afficheDesPays(r) {
-            r.forEach(ville => {
-                const div = document.createElement('div')
-                
-                div.innerHTML = `
-                <div class="country">
-                <img src = "${ville.flags.png}"><br>
-                <h4> ${ville.name.common}<h4><br>
-                <span> region :${ville.region}</span><br>
-                <span> population :${ville.population}</span><br>
-                <span> Capital:${ville.capital}</span><br>`
-
-                affiche.appendChild(div)
-            })
-
-        bouton.addEventListener('click', function(){
-            document.body.classList.toggle('color')
-            flex.style.background = 
-            
-            bouton.classList.toggle('color')
-        })
-
-       
-            
-        }
         afficheDesPays(r)
-
-           
 
             input.addEventListener('input', function() {
                 if(input.value == '') {
-                    alert('merci de saisir un pays')
+                    
                 } else {
                     fetch(`https://restcountries.com/v3.1/name/${input.value}`)
                     .then(pays => pays.json())
                     .then(data => {
-                        
-                        affiche.innerHTML = '';
-                        
-            
 
              afficheDesPays(data)    
 
-
-                    })
-                    
+                    })   
 
                 }
             })
 
-           select.addEventListener('click', function(){
-            fetch(`https://restcountries.com/v3.1/name/region/${input.value}`)
+           select.addEventListener('change', function(e){
+            console.log(select.value);
+            fetch(`https://restcountries.com/v3.1/region/${select.value}`)
            
             .then(pays => pays.json())
-            .then(region => {
-                
-                console.log(region);
-            
+            .then(region => { 
+                afficheDesPays(region)
+           
+           }) 
+        })
+
+
+
+        select.addEventListener('change', function() {
+            // affiche.innerHTML = '';
+            const input = select.value;
+            const paysTrouves = afficheDesPays(input);
+
+            if(paysTrouves.length > 0) {
+                afficheDesPays(paysTrouves)
+                error.style.display = 'none';
+            }else {
+                error.style.display = 'block'
+            }
+        })
+
+        
+
+
+
+
+        
+       
+
     
-                affiche.innerHTML = '';
-
-                
-         
-            
-           })
-
+          })
+       
 
             
             
@@ -92,12 +100,12 @@ fetch('https://restcountries.com/v3.1/all')
 
     
 
-        }
+        // }
 
-           ) 
+        //    ) 
 
         
-});
+
 
 
 
